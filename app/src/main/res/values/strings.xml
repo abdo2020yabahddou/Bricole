@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Bricole</string>
+    <string name="join_provider">You have a service you can provide, Join Bricole and reach out to your clients</string>
+    <string name="find">Trusted home repair professionals</string>
+    <string name="search_providers">Search Providers</string>
+    <string name="confirm_join"><![CDATA[Confirm & Join]]></string>
+    <string name="no_pro_found">No providers found for your search</string>
+    <string name="phone_error">Phone must be exactly 12 digits (ex: +212678301232)</string>
+    <string name="valid_phone">Valid phone number</string>
+    <string name="welcome_to_bricole">Welcome to Bricole!</string>
+    <string name="try_again">Try changing your filters</string>
+    <string name="no_providers_available">No providers available</string>
+    <string name="check_back_later">Please check back later or try a different service</string>
+    <string name="search_by_service_city"><![CDATA[Search by service & city…]]></string>
+    <string name="loading_services">Loading services...</string>
+    <string name="our_services">Our services</string>
+</resources>
