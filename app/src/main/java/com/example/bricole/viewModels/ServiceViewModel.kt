@@ -17,7 +17,6 @@ import okhttp3.internal.wait
 
 class ServiceViewModel(private val serviceRepository: ServiceRepository) : ViewModel() {
 
-
     private val _uiState = MutableStateFlow(HomeState())
     val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
@@ -36,8 +35,9 @@ class ServiceViewModel(private val serviceRepository: ServiceRepository) : ViewM
                 _uiState.value = _uiState.value.copy(services = services, isLoading = false)
             }
             result.onFailure { e ->
-                _uiState.value =
-                    _uiState.value.copy(isLoading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false, error = e.message
+                )
             }
         }
     }
@@ -49,11 +49,14 @@ class ServiceViewModel(private val serviceRepository: ServiceRepository) : ViewM
 
             val result = serviceRepository.getProviders(id)
             result.onSuccess { providers ->
-                _uiState.value = _uiState.value.copy(providers = providers, isLoading = false)
+                _uiState.value = _uiState.value.copy(
+                    providers = providers, isLoading = false
+                )
             }
             result.onFailure { e ->
-                _uiState.value =
-                    _uiState.value.copy(isLoading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false, error = e.message
+                )
             }
         }
     }
