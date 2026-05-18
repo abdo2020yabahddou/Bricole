@@ -29,8 +29,9 @@ class ProviderViewModel(private val providerRepository: ProviderRepository) : Vi
 
     fun search(serviceId: Int, city: String) {
         viewModelScope.launch {
-            _proSearchState.value =
-                _proSearchState.value.copy(isLoading = true, error = null, isSearching = true)
+            _proSearchState.value = _proSearchState.value.copy(
+                isLoading = true, error = null, isSearching = true
+            )
             val result = providerRepository.search(serviceId, city)
             result.onSuccess { providers ->
                 _proSearchState.value = _proSearchState.value.copy(
@@ -51,13 +52,12 @@ class ProviderViewModel(private val providerRepository: ProviderRepository) : Vi
 
     fun join(request: JoinRequest) {
         viewModelScope.launch {
-            _proJoinState.value =
-                _proJoinState.value.copy(
-                    isLoading = true,
-                    error = null,
-                    isJoining = true,
-                    joinSuccess = false
-                )
+            _proJoinState.value = _proJoinState.value.copy(
+                isLoading = true,
+                error = null,
+                isJoining = true,
+                joinSuccess = false
+            )
 
             val result = providerRepository.join(request)
             result.onSuccess { providers ->
@@ -95,8 +95,8 @@ class ProviderViewModel(private val providerRepository: ProviderRepository) : Vi
         _proSearchState.value = _proSearchState.value.copy(isSearching = false)
     }
 
-    fun clearJoin(){
-        _proJoinState.value=_proJoinState.value.copy(joinSuccess = false)
+    fun clearJoin() {
+        _proJoinState.value = _proJoinState.value.copy(joinSuccess = false)
     }
 
 
