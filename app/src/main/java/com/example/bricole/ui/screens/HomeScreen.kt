@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,8 +25,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -156,15 +159,32 @@ private fun ErrorCard(
         error?.let { message ->
             Text(
                 text = message,
-                color = Color.Red,
-                fontSize = 22.sp,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(22.dp))
-            Button(enabled = state.retryCount < 3, onClick = {
-                serviceViewModel.retryServices()
-            }) {
-                Text(text = "Retry", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Button(
+                modifier = Modifier.height(42.dp), shape = RoundedCornerShape(10.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 6.dp
+                ),
+                contentPadding = PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 12.dp
+                ), enabled = state.retryCount < 5, onClick = {
+                    serviceViewModel.retryServices()
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Refresh,
+                    contentDescription = "Retry"
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "Retry",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.surface
+                )
             }
         }
     }

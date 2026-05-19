@@ -133,7 +133,6 @@ fun SearchScreen(onBack: () -> Unit) {
                     Spacer(Modifier.width(10.dp))
                     Text(
                         text = "Search",
-                        //  color = colorResource(R.color.primary_blue),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
@@ -291,7 +290,7 @@ private fun ColumnScope.EmptyCase() {
 @Composable
 private fun ColumnScope.Success(providerState: SearchState) {
     Text(
-        "${providerState.providers.size} result${if (providerState.providers.size != 1) "s" else ""} found",
+        text = "${providerState.providers.size} result${if (providerState.providers.size != 1) "s" else ""} found",
         fontSize = 20.sp,
         color = Primary,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)

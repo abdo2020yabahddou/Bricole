@@ -4,11 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.view.WindowCompat
 import com.example.bricole.navigation.Navigation
 import com.example.bricole.ui.theme.BricoleTheme
-import com.example.bricole.ui.theme.topHomeColor
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

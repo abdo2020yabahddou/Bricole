@@ -49,7 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -90,8 +89,6 @@ fun JoinScreen(onBack: () -> Unit) {
     var serviceId: Int? by remember { mutableStateOf(null) }
     var serviceExpanded by remember { mutableStateOf(false) }
     var serviceName by rememberSaveable { mutableStateOf("") }
-
-    var openAlertDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(proJoinState.joinSuccess) {
         if (proJoinState.joinSuccess) {
@@ -166,9 +163,9 @@ fun JoinScreen(onBack: () -> Unit) {
                     }
                 }
 
-                proJoinState.joinSuccess-> {
+                proJoinState.joinSuccess -> {
                     Spacer(Modifier.height(14.dp))
-                    JoinSuccess2(onDismiss = {
+                    JoinSuccess(onDismiss = {
                         name = ""
                         phone = ""
                         selectedCity = ""
@@ -183,66 +180,66 @@ fun JoinScreen(onBack: () -> Unit) {
 
 }
 
-@Composable
-private fun JoinSuccess() {
-    Card(
-        modifier = Modifier
-            .padding(24.dp),
-        shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.divider_dark)
-        ),
-        elevation = CardDefaults.cardElevation(10.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(
-                        colorResource(R.color.primary_blue).copy(alpha = 0.15f),
-                        CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Success",
-                    tint = colorResource(R.color.primary_blue),
-                    modifier = Modifier.size(60.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = stringResource(R.string.confirm_join),
-                color = OnPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.welcome_to_bricole),
-                color = OnPrimary.copy(alpha = 0.8f),
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
+//@Composable
+//private fun JoinSuccess() {
+//    Card(
+//        modifier = Modifier
+//            .padding(24.dp),
+//        shape = RoundedCornerShape(32.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = colorResource(R.color.divider_dark)
+//        ),
+//        elevation = CardDefaults.cardElevation(10.dp)
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .padding(32.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//
+//            Box(
+//                modifier = Modifier
+//                    .size(100.dp)
+//                    .background(
+//                        colorResource(R.color.primary_blue).copy(alpha = 0.15f),
+//                        CircleShape
+//                    ),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Check,
+//                    contentDescription = "Success",
+//                    tint = colorResource(R.color.primary_blue),
+//                    modifier = Modifier.size(60.dp)
+//                )
+//            }
+//            Spacer(modifier = Modifier.height(24.dp))
+//
+//            Text(
+//                text = stringResource(R.string.confirm_join),
+//                color = OnPrimary,
+//                fontWeight = FontWeight.Bold,
+//                fontSize = 24.sp,
+//                textAlign = TextAlign.Center
+//            )
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Text(
+//                text = stringResource(R.string.welcome_to_bricole),
+//                color = OnPrimary.copy(alpha = 0.8f),
+//                fontSize = 16.sp,
+//                textAlign = TextAlign.Center
+//            )
+//        }
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun JoinSuccess2(onDismiss:()->Unit) {
+private fun JoinSuccess(onDismiss: () -> Unit) {
     BasicAlertDialog(
-        onDismissRequest = {onDismiss()},
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(),
         content = {
             Card(
@@ -299,55 +296,55 @@ private fun JoinSuccess2(onDismiss:()->Unit) {
         })
 }
 
-@Composable
-private fun JoinSuccess1() {
-    Card(
-        modifier = Modifier
-            .padding(24.dp)
-            .clip(CircleShape),
-        shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.divider_dark)
-        ),
-        elevation = CardDefaults.cardElevation(10.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(70.dp)
-                    .background(
-                        colorResource(R.color.divider_dark).copy(alpha = 0.15f),
-                        CircleShape
-                    ),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Success",
-                    tint = OnPrimary,
-                    modifier = Modifier.size(60.dp)
-                )
-            }
-
-            Text(
-                stringResource(R.string.confirm_join),
-                color = OnPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = stringResource(R.string.welcome_to_bricole),
-                color = colorResource(R.color.primary_blue),
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
+//@Composable
+//private fun JoinSuccess1() {
+//    Card(
+//        modifier = Modifier
+//            .padding(24.dp)
+//            .clip(CircleShape),
+//        shape = RoundedCornerShape(22.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = colorResource(R.color.divider_dark)
+//        ),
+//        elevation = CardDefaults.cardElevation(10.dp)
+//    ) {
+//        Column(
+//            modifier = Modifier.padding(32.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Box(
+//                contentAlignment = Alignment.Center,
+//                modifier = Modifier
+//                    .size(70.dp)
+//                    .background(
+//                        colorResource(R.color.divider_dark).copy(alpha = 0.15f),
+//                        CircleShape
+//                    ),
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Check,
+//                    contentDescription = "Success",
+//                    tint = OnPrimary,
+//                    modifier = Modifier.size(60.dp)
+//                )
+//            }
+//
+//            Text(
+//                stringResource(R.string.confirm_join),
+//                color = OnPrimary,
+//                fontWeight = FontWeight.Bold,
+//                fontSize = 20.sp,
+//                textAlign = TextAlign.Center
+//            )
+//            Text(
+//                text = stringResource(R.string.welcome_to_bricole),
+//                color = colorResource(R.color.primary_blue),
+//                fontSize = 16.sp,
+//                textAlign = TextAlign.Center
+//            )
+//        }
+//    }
+//}
 
 
 @Composable

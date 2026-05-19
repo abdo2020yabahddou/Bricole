@@ -14,7 +14,6 @@ class ProviderRepository(private val providerApi: ProviderApi) {
             Log.e("API", e.stackTraceToString())
             Result.failure(e)
         }
-
     }
 
     suspend fun join(request: JoinRequest): Result<ProviderResponseDto> {

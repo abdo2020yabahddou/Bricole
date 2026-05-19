@@ -7,7 +7,6 @@ import com.example.bricole.data.ServiceResponseDto
 
 
 class ServiceRepository(private val serviceApi: ServiceApi) {
-
     suspend fun getAllServices(): Result<List<ServiceResponseDto>> {
         return try {
             Result.success(serviceApi.getAllServices())
@@ -24,6 +23,5 @@ class ServiceRepository(private val serviceApi: ServiceApi) {
             Log.e("API", e.stackTraceToString())
             Result.failure(e)
         }
-
     }
 }
