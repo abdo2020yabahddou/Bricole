@@ -38,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -83,12 +82,7 @@ fun SearchScreen(onBack: () -> Unit) {
 
     var hasSearched by rememberSaveable { mutableStateOf(false) }
 
-
     val isValid = selectedCity.isNotBlank() && serviceName.isNotBlank()
-
-//    LaunchedEffect(hasSearched) {
-//        providerViewModel.clearSearch()
-//    }
 
     Scaffold(topBar = { SearchTopBar(onBack) }) { contentPadding ->
         Column(
@@ -110,18 +104,27 @@ fun SearchScreen(onBack: () -> Unit) {
                     serviceName = serviceName,
                     serviceState = serviceState,
                     onServiceExpanded = { serviceExpanded = it },
-                    onServiceIdChanged = { newValue -> serviceId = newValue },
-                    onServiceNameChanged = { newValue -> serviceName = newValue }
+                    onServiceIdChanged = { newValue ->
+                        serviceId = newValue
+                        hasSearched = false
+                    },
+                    onServiceNameChanged = { newValue ->
+                        serviceName = newValue
+                        hasSearched = false
+                    }
                 )
                 SearchCity(
                     cityExpanded = cityExpanded,
                     selectedCity = selectedCity,
                     providerState = providerState,
                     onCityExpanded = { cityExpanded = it },
-                    onCityChanged = { newValue -> selectedCity = newValue })
+                    onCityChanged = { newValue ->
+                        selectedCity = newValue
+                        hasSearched = false
+                    })
 
                 Button(
-                    enabled = isValid && !providerState.isLoading,
+                    enabled = isValid && !providerState.isLoading && !hasSearched,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),

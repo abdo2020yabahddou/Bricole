@@ -474,7 +474,7 @@ private fun NameInput(name: String, onNameChanged: (String) -> Unit) {
 
 @Composable
 private fun PhoneInput(phone: String, onPhoneChanged: (String) -> Unit) {
-    val prefix = "+212"
+    val prefix = "+2126"
     val maxLength = 13
     val isValidPhone = phone.length == maxLength && phone.startsWith(prefix)
     val isError = phone.isNotEmpty() && !isValidPhone
