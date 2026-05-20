@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +37,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -163,7 +163,7 @@ private fun ErrorCard(
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(22.dp))
-            Button(
+            OutlinedButton(
                 modifier = Modifier.height(42.dp), shape = RoundedCornerShape(10.dp),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 6.dp
@@ -180,10 +180,9 @@ private fun ErrorCard(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Retry",
+                    text = "Refresh",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.surface
+                    fontWeight = FontWeight.Medium,
                 )
             }
         }
@@ -352,7 +351,7 @@ private fun JoinBricoleCard(onJoinClick: () -> Unit) {
 }
 
 @Composable
-fun SearchBricoleCard(onSearchClick: () -> Unit) {
+private fun SearchBricoleCard(onSearchClick: () -> Unit) {
     Card {
         Column(
             modifier = Modifier

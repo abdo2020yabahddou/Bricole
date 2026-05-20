@@ -7,6 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 //localhost api: http://192.168.11.103:8080/
+//https://bricole-spring-boot-backend.onrender.com
 private const val BASE_URL = "https://bricole-spring-boot-backend.onrender.com"
 
 object RetrofitInstance {
