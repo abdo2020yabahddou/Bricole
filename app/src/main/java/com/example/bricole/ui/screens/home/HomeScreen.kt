@@ -1,4 +1,4 @@
-package com.example.bricole.ui.screens
+package com.example.bricole.ui.screens.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -58,10 +58,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.bricole.R
-import com.example.bricole.data.HomeState
 import com.example.bricole.data.ServiceResponseDto
 import com.example.bricole.ui.theme.topHomeColor
-import com.example.bricole.viewModels.ServiceViewModel
 
 
 @Composable
@@ -71,8 +69,8 @@ fun HomeScreen(
     onJoinClick: () -> Unit
 ) {
 
-    val serviceViewModel: ServiceViewModel = viewModel(factory = ServiceViewModel.factory)
-    val state by serviceViewModel.uiState.collectAsStateWithLifecycle()
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory)
+    val state by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { HomeAppBar() },
@@ -93,7 +91,9 @@ fun HomeScreen(
             }
 
             state.error != null -> {
-                ErrorCard(state.error, state, serviceViewModel)
+                ErrorCard(state.error, state.retryCount) {
+                    homeViewModel.retryServices()
+                }
             }
 
             else -> {
@@ -148,8 +148,8 @@ fun HomeScreen(
 @Composable
 private fun ErrorCard(
     error: String?,
-    state: HomeState,
-    serviceViewModel: ServiceViewModel
+    retryCount: Int,
+    onRetry: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -171,8 +171,8 @@ private fun ErrorCard(
                 contentPadding = PaddingValues(
                     horizontal = 16.dp,
                     vertical = 12.dp
-                ), enabled = state.retryCount < 5, onClick = {
-                    serviceViewModel.retryServices()
+                ), enabled = retryCount < 5, onClick = {
+                    onRetry()
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Refresh,

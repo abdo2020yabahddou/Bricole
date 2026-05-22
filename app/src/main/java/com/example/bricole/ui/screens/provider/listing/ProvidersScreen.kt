@@ -1,4 +1,4 @@
-package com.example.bricole.ui.screens
+package com.example.bricole.ui.screens.provider.listing
 
 
 import android.content.Intent
@@ -56,19 +56,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bricole.R
 import com.example.bricole.data.ProviderResponseDto
-import com.example.bricole.viewModels.ServiceViewModel
 import androidx.core.net.toUri
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProviderScreen(serviceId: Int, serviceName: String, onBack: () -> Unit) {
+fun ProvidersScreen(serviceId: Int, serviceName: String, onBack: () -> Unit) {
 
-    val serviceViewModel: ServiceViewModel = viewModel(factory = ServiceViewModel.factory)
-    val serviceState by serviceViewModel.uiState.collectAsStateWithLifecycle()
+    val viewModel: ProviderListViewModel = viewModel(factory = ProviderListViewModel.factory)
+    val serviceState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(serviceId) {
-        serviceViewModel.showProviders(serviceId)
+        viewModel.loadProviders(serviceId)
     }
 
     Scaffold(
@@ -86,11 +85,13 @@ fun ProviderScreen(serviceId: Int, serviceName: String, onBack: () -> Unit) {
                     LoadingScreen()
                 }
 
-                serviceState.error != null -> {
+                serviceState.isError -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        serviceState.error?.let {
-                            Text(it, color = Color.Red.copy(alpha = 0.8f), fontSize = 22.sp)
-                        }
+                        Text(
+                            text = "An error has been occurred",
+                            color = Color.Red.copy(alpha = 0.8f),
+                            fontSize = 22.sp
+                        )
                     }
                 }
 
@@ -167,7 +168,7 @@ private fun LoadingScreen() {
                 strokeWidth = 4.dp
             )
             Text(
-                "Loading providers...",
+                text = stringResource(R.string.loading_providers),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 fontSize = 14.sp
             )

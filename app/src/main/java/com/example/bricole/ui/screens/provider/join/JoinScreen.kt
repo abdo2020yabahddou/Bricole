@@ -1,4 +1,4 @@
-package com.example.bricole.ui.screens
+package com.example.bricole.ui.screens.provider.join
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -61,24 +61,17 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bricole.R
-import com.example.bricole.data.HomeState
 import com.example.bricole.data.JoinRequest
-import com.example.bricole.data.SearchState
+import com.example.bricole.data.ServiceResponseDto
 import com.example.bricole.ui.theme.OnPrimary
-import com.example.bricole.viewModels.ProviderViewModel
-import com.example.bricole.viewModels.ServiceViewModel
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinScreen(onBack: () -> Unit) {
 
-    val providerViewModel: ProviderViewModel = viewModel(factory = ProviderViewModel.factory)
-    val proJoinState by providerViewModel.proJoinState.collectAsStateWithLifecycle()
-    val proSearchState by providerViewModel.proSearchState.collectAsStateWithLifecycle()
-
-    val serviceViewModel: ServiceViewModel = viewModel(factory = ServiceViewModel.factory)
-    val serviceState by serviceViewModel.uiState.collectAsStateWithLifecycle()
+    val viewModel: JoinViewModel = viewModel(factory = JoinViewModel.factory)
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     var name by rememberSaveable { mutableStateOf("") }
     var phone by rememberSaveable { mutableStateOf("") }
@@ -90,15 +83,15 @@ fun JoinScreen(onBack: () -> Unit) {
     var serviceExpanded by remember { mutableStateOf(false) }
     var serviceName by rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(proJoinState.joinSuccess) {
-        if (proJoinState.joinSuccess) {
+    LaunchedEffect(state.joinSuccess) {
+        if (state.joinSuccess) {
             delay(10000)
             name = ""
             phone = ""
             selectedCity = ""
             serviceName = ""
             serviceId = null
-            providerViewModel.clearJoin()
+            viewModel.clearJoin()
         }
     }
 
@@ -121,7 +114,7 @@ fun JoinScreen(onBack: () -> Unit) {
                     serviceExpanded = serviceExpanded,
                     onExpandedChange = { serviceExpanded = it },
                     serviceName = serviceName,
-                    serviceState = serviceState,
+                    services = state.services,
                     onServiceNameChanged = { newValue -> serviceName = newValue },
                     onServiceIdChanged = { newValue -> serviceId = newValue })
                 SearchCity(
@@ -129,16 +122,16 @@ fun JoinScreen(onBack: () -> Unit) {
                     onExpandedChange = { cityExpanded = it },
                     selectedCity = selectedCity,
                     onCitySelected = { selectedCity = it },
-                    searchState = proSearchState
+                    cities = state.cities
                 )
             }
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                enabled = isValid && !proJoinState.isLoading,
+                enabled = isValid && !state.isLoading,
                 onClick = {
-                    providerViewModel.join(
+                    viewModel.join(
                         request = JoinRequest(
                             name,
                             phone,
@@ -151,19 +144,19 @@ fun JoinScreen(onBack: () -> Unit) {
             }
 
             when {
-                proJoinState.isLoading -> {
+                state.isLoading -> {
                     LoadingScreen()
                 }
 
-                proJoinState.error != null -> {
+                state.error != null -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        proJoinState.error?.let {
+                        state.error?.let {
                             Text(it, color = Color.Red.copy(alpha = 0.8f), fontSize = 22.sp)
                         }
                     }
                 }
 
-                proJoinState.joinSuccess -> {
+                state.joinSuccess -> {
                     Spacer(Modifier.height(14.dp))
                     JoinSuccess(onDismiss = {
                         name = ""
@@ -171,7 +164,7 @@ fun JoinScreen(onBack: () -> Unit) {
                         selectedCity = ""
                         serviceName = ""
                         serviceId = null
-                        providerViewModel.clearJoin()
+                        viewModel.clearJoin()
                     })
                 }
             }
@@ -371,7 +364,7 @@ private fun ServiceInput(
     onExpandedChange: (Boolean) -> Unit,
     serviceName: String,
     onServiceNameChanged: (String) -> Unit,
-    serviceState: HomeState,
+    services: List<ServiceResponseDto>,
     onServiceIdChanged: (Int) -> Unit
 ) {
 
@@ -402,7 +395,7 @@ private fun ServiceInput(
             onDismissRequest = { onExpandedChange(false) },
             expanded = serviceExpanded
         ) {
-            serviceState.services.forEach { service ->
+            services.forEach { service ->
                 DropdownMenuItem(text = { Text(service.name) }, onClick = {
                     onServiceIdChanged(service.id)
                     onServiceNameChanged(service.name)
@@ -420,7 +413,7 @@ private fun SearchCity(
     onExpandedChange: (Boolean) -> Unit,
     selectedCity: String,
     onCitySelected: (String) -> Unit,
-    searchState: SearchState
+    cities: List<String>
 ) {
     ExposedDropdownMenuBox(
         expanded = cityExpanded,
@@ -446,7 +439,7 @@ private fun SearchCity(
         ExposedDropdownMenu(
             expanded = cityExpanded,
             onDismissRequest = { onExpandedChange(false) }) {
-            searchState.cities.forEach { city ->
+            cities.forEach { city ->
                 DropdownMenuItem(text = { Text(city) }, onClick = {
                     onCitySelected(city)
                     onExpandedChange(false)
@@ -487,7 +480,7 @@ private fun PhoneInput(phone: String, onPhoneChanged: (String) -> Unit) {
                 onPhoneChanged("")
             } else if (newPhone.startsWith(prefix)) {
                 // only numbers are allowed after prefix
-                val digitsOnly = newPhone//.substring(prefix.length).filter { it.isDigit() }
+                val digitsOnly = newPhone  //.substring(prefix.length).filter { it.isDigit() }
 
                 // the max is max length we limited
                 if (digitsOnly.length <= maxLength) {
@@ -495,7 +488,7 @@ private fun PhoneInput(phone: String, onPhoneChanged: (String) -> Unit) {
                 }
             } else {
                 // If user tries to type without prefix,add it
-                val digitsOnly = newPhone//.filter { it.isDigit() }
+                val digitsOnly = newPhone    //.filter { it.isDigit() }
 
                 if (digitsOnly.length <= maxLength) {
                     onPhoneChanged(digitsOnly)

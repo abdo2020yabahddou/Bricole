@@ -1,4 +1,4 @@
-package com.example.bricole.ui.screens
+package com.example.bricole.ui.screens.provider.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,23 +55,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bricole.R
-import com.example.bricole.data.HomeState
-import com.example.bricole.data.SearchState
+import com.example.bricole.data.ProviderResponseDto
+import com.example.bricole.data.ServiceResponseDto
+import com.example.bricole.ui.screens.provider.listing.ProviderCard
 import com.example.bricole.ui.theme.Primary
 import com.example.bricole.ui.theme.TextSub
-import com.example.bricole.viewModels.ProviderViewModel
-import com.example.bricole.viewModels.ServiceViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(onBack: () -> Unit) {
 
-    val providerViewModel: ProviderViewModel = viewModel(factory = ProviderViewModel.factory)
-    val providerState by providerViewModel.proSearchState.collectAsStateWithLifecycle()
-
-    val serviceViewModel: ServiceViewModel = viewModel(factory = ServiceViewModel.factory)
-    val serviceState by serviceViewModel.uiState.collectAsStateWithLifecycle()
+    val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.factory)
+    val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
 
     var cityExpanded by rememberSaveable { mutableStateOf(false) }
     var selectedCity by rememberSaveable { mutableStateOf("") }
@@ -102,7 +98,7 @@ fun SearchScreen(onBack: () -> Unit) {
                 SearchService(
                     serviceExpanded = serviceExpanded,
                     serviceName = serviceName,
-                    serviceState = serviceState,
+                    services = uiState.services,
                     onServiceExpanded = { serviceExpanded = it },
                     onServiceIdChanged = { newValue ->
                         serviceId = newValue
@@ -116,7 +112,7 @@ fun SearchScreen(onBack: () -> Unit) {
                 SearchCity(
                     cityExpanded = cityExpanded,
                     selectedCity = selectedCity,
-                    providerState = providerState,
+                    cities = uiState.cities,
                     onCityExpanded = { cityExpanded = it },
                     onCityChanged = { newValue ->
                         selectedCity = newValue
@@ -124,13 +120,13 @@ fun SearchScreen(onBack: () -> Unit) {
                     })
 
                 Button(
-                    enabled = isValid && !providerState.isLoading && !hasSearched,
+                    enabled = isValid && !uiState.isLoading && !hasSearched,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
                     onClick = {
                         hasSearched = true
-                        providerViewModel.search(serviceId, selectedCity)
+                        searchViewModel.search(serviceId, selectedCity)
                     }) {
                     Icon(
                         imageVector = Icons.Filled.Search,
@@ -147,13 +143,13 @@ fun SearchScreen(onBack: () -> Unit) {
                 }
             }
             when {
-                providerState.isLoading -> {
+                uiState.isLoading -> {
                     LoadingScreen(contentPadding)
                 }
 
-                providerState.error != null -> {
+                uiState.error != null -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        providerState.error?.let {
+                        uiState.error?.let {
                             Text(it, color = Color.Red.copy(alpha = 0.8f), fontSize = 22.sp)
                         }
                     }
@@ -161,10 +157,10 @@ fun SearchScreen(onBack: () -> Unit) {
 
                 else ->
                     if (hasSearched) {
-                        if (providerState.providers.isEmpty()) {
+                        if (uiState.providers.isEmpty()) {
                             EmptyCase()
                         } else {
-                            Success(providerState)
+                            Success(uiState.providers)
                         }
                     }
             }
@@ -179,7 +175,7 @@ private fun SearchCity(
     onCityExpanded: (Boolean) -> Unit,
     selectedCity: String,
     onCityChanged: (String) -> Unit,
-    providerState: SearchState
+    cities: List<String>,
 ) {
     ExposedDropdownMenuBox(
         expanded = cityExpanded,
@@ -206,7 +202,7 @@ private fun SearchCity(
             onDismissRequest = { onCityExpanded(false) },
             expanded = cityExpanded
         ) {
-            providerState.cities.forEach { city ->
+            cities.forEach { city ->
                 DropdownMenuItem(text = { Text(city) }, onClick = {
                     onCityChanged(city)
                     onCityExpanded(false)
@@ -223,7 +219,7 @@ private fun SearchService(
     onServiceExpanded: (Boolean) -> Unit,
     serviceName: String,
     onServiceNameChanged: (String) -> Unit,
-    serviceState: HomeState,
+    services: List<ServiceResponseDto>,
     onServiceIdChanged: (Int) -> Unit
 ) {
     ExposedDropdownMenuBox(
@@ -252,7 +248,7 @@ private fun SearchService(
             onDismissRequest = { onServiceExpanded(false) },
             expanded = serviceExpanded
         ) {
-            serviceState.services.forEach { service ->
+            services.forEach { service ->
                 DropdownMenuItem(text = { Text(service.name) }, onClick = {
                     onServiceIdChanged(service.id)
                     onServiceNameChanged(service.name)
@@ -296,9 +292,9 @@ private fun ColumnScope.EmptyCase() {
 }
 
 @Composable
-private fun ColumnScope.Success(providerState: SearchState) {
+private fun ColumnScope.Success(providers: List<ProviderResponseDto>) {
     Text(
-        text = "${providerState.providers.size} result${if (providerState.providers.size != 1) "s" else ""} found",
+        text = "${providers.size} result${if (providers.size != 1) "s" else ""} found",
         fontSize = 20.sp,
         color = Primary,
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -310,7 +306,7 @@ private fun ColumnScope.Success(providerState: SearchState) {
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(providerState.providers) { provider ->
+        items(providers) { provider ->
             ProviderCard(provider)
         }
     }

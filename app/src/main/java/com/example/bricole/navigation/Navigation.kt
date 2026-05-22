@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.bricole.ui.screens.HomeScreen
-import com.example.bricole.ui.screens.JoinScreen
-import com.example.bricole.ui.screens.ProviderScreen
-import com.example.bricole.ui.screens.SearchScreen
+import com.example.bricole.ui.screens.home.HomeScreen
+import com.example.bricole.ui.screens.provider.join.JoinScreen
+import com.example.bricole.ui.screens.provider.listing.ProvidersScreen
+import com.example.bricole.ui.screens.provider.search.SearchScreen
 
 @Composable
 fun Navigation() {
@@ -21,14 +21,15 @@ fun Navigation() {
             HomeScreen(
                 onServiceClick = { dto ->
                     navController.navigate(
-                        route = Screen.ProviderScreen.createRoute(
+                        route = Screen.ProvidersScreen.createRoute(
                             serviceId = dto.id,
                             serviceName = dto.name
                         )
                     )
                 },
                 onSearchClick = { navController.navigate(Screen.SearchScreen.route) },
-                onJoinClick = { navController.navigate(Screen.JoinScreen.route) })
+                onJoinClick = { navController.navigate(Screen.JoinScreen.route) }
+            )
         }
         composable(Screen.SearchScreen.route) {
             SearchScreen(
@@ -36,7 +37,7 @@ fun Navigation() {
             )
         }
         composable(
-            Screen.ProviderScreen.route,
+            route = Screen.ProvidersScreen.route,
             arguments = listOf(
                 navArgument("serviceId") {
                     type = NavType.IntType
@@ -46,11 +47,14 @@ fun Navigation() {
                 }
             )
         ) { backStackEntry ->
-            val serviceId = backStackEntry.arguments?.getInt("serviceId") ?: 0
-            val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
-            ProviderScreen(serviceId, serviceName) {
-                navController.popBackStack()
-            }
+            val args = backStackEntry.arguments
+            val serviceId = args?.getInt("serviceId") ?: return@composable
+            val serviceName = args.getString("serviceName") ?: return@composable
+            ProvidersScreen(
+                serviceId = serviceId,
+                serviceName = serviceName,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.JoinScreen.route) {
             JoinScreen(
