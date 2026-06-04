@@ -9,7 +9,8 @@ data class SearchState(
     val cities: List<String>,
     val isLoading: Boolean,
     val isSearching: Boolean,
-    val error: String?
+    val error: String?,
+    val retryCount: Int
 ) {
     companion object {
         val default = SearchState(
@@ -18,7 +19,8 @@ data class SearchState(
             cities = emptyList(),
             isLoading = false,
             isSearching = false,
-            error = null
+            error = null,
+            retryCount = 0
         )
     }
 }

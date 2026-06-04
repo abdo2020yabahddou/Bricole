@@ -62,7 +62,7 @@ class JoinViewModel(
                 )
             }
             val result = providerRepository.join(request)
-            result.onSuccess { providers ->
+            result.onSuccess {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -88,6 +88,13 @@ class JoinViewModel(
         _uiState.update {
             it.copy(joinSuccess = false)
         }
+    }
+
+    fun retryJoin(request: JoinRequest) {
+        _uiState.update {
+            it.copy(isLoading = true, retryCount = it.retryCount + 1)
+        }
+        join(request)
     }
 
     companion object {

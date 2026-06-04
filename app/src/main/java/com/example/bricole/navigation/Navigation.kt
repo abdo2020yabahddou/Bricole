@@ -19,11 +19,11 @@ fun Navigation() {
     NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-                onServiceClick = { dto ->
+                onServiceClick = { serviceResponse ->
                     navController.navigate(
                         route = Screen.ProvidersScreen.createRoute(
-                            serviceId = dto.id,
-                            serviceName = dto.name
+                            serviceId = serviceResponse.id,
+                            serviceName = serviceResponse.name
                         )
                     )
                 },

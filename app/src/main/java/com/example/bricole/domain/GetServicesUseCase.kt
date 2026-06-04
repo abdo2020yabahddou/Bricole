@@ -6,7 +6,6 @@ import com.example.bricole.repository.ServiceRepository
 class GetServicesUseCase(
     private val serviceRepository: ServiceRepository,
 ) {
-
     suspend operator fun invoke(): List<ServiceResponseDto> {
         val result = serviceRepository.getAllServices()
         if (result.isSuccess) {

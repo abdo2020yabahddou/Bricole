@@ -51,9 +51,9 @@ class SearchViewModel(
 
     fun search(serviceId: Int, city: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true, error = null, isSearching = true
-            )
+            _uiState.update {
+                it.copy(isLoading = true, error = null, isSearching = true)
+            }
             val result = providerRepository.search(serviceId, city)
             result.onSuccess { providers ->
                 _uiState.update {
@@ -77,9 +77,17 @@ class SearchViewModel(
     }
 
     fun clearSearch() {
-        _uiState.value = _uiState.value.copy(isSearching = false)
+        _uiState.update {
+            it.copy(isSearching = false)
+        }
     }
 
+    fun retrySearch(serviceId: Int, city: String) {
+        _uiState.update {
+            it.copy(isLoading = true, retryCount = it.retryCount + 1)
+        }
+        search(serviceId, city)
+    }
 
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {

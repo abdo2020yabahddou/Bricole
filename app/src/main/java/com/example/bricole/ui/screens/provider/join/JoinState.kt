@@ -1,6 +1,5 @@
 package com.example.bricole.ui.screens.provider.join
 
-import com.example.bricole.data.ProviderResponseDto
 import com.example.bricole.data.ServiceResponseDto
 
 data class JoinState(
@@ -9,7 +8,8 @@ data class JoinState(
     val isLoading: Boolean,
     val isJoining: Boolean,
     val joinSuccess: Boolean,
-    val error: String?
+    val error: String?,
+    val retryCount: Int
 ) {
     companion object {
         val default = JoinState(
@@ -18,7 +18,8 @@ data class JoinState(
             isLoading = false,
             isJoining = false,
             joinSuccess = false,
-            error = null
+            error = null,
+            retryCount = 0
         )
     }
 }

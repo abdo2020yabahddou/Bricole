@@ -15,4 +15,11 @@
     <string name="loading_services">Loading services...</string>
     <string name="our_services">Our services</string>
     <string name="loading_providers">Loading providers...</string>
+    <string name="join_bricole">Join Bricole</string>
+    <string name="select_a_service">Select a service</string>
+    <string name="service_type">service type</string>
+    <string name="service">service</string>
+    <string name="select_your_city">Select your city</string>
+    <string name="name_example">Ayman Saad</string>
+    <string name="error">An error has been occurred</string>
 </resources>

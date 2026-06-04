@@ -49,7 +49,6 @@ class HomeViewModel(
         }
         loadServices()
     }
-
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

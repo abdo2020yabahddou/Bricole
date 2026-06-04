@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,19 +24,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -59,6 +52,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.bricole.R
 import com.example.bricole.data.ServiceResponseDto
+import com.example.bricole.ui.screens.ErrorCard
+import com.example.bricole.ui.screens.Loading
 import com.example.bricole.ui.theme.topHomeColor
 
 
@@ -69,37 +64,29 @@ fun HomeScreen(
     onJoinClick: () -> Unit
 ) {
 
-    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory)
-    val state by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.factory)
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { HomeAppBar() },
-        modifier = Modifier,
-        bottomBar = {
-            NavigationBar(
-                modifier = Modifier
-                    .background(topHomeColor)
-                    .heightIn(max = 42.dp),
-                containerColor = topHomeColor
-            ) { }
-        }
     ) { contentPadding ->
 
         when {
             state.isLoading -> {
-                LoadingScreen()
+                Loading(title = stringResource(R.string.loading_services))
             }
 
             state.error != null -> {
-                ErrorCard(state.error, state.retryCount) {
-                    homeViewModel.retryServices()
-                }
+                ErrorCard(
+                    error = state.error,
+                    retryCount = state.retryCount,
+                    onRetry = { viewModel.retryServices() }
+                )
             }
 
             else -> {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    userScrollEnabled = true,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(12.dp),
@@ -110,9 +97,9 @@ fun HomeScreen(
                     item(span = { GridItemSpan(2) }) {
                         Column {
                             Spacer(modifier = Modifier.height(10.dp))
-                            SearchBricoleCard(onSearchClick = {
-                                onSearchClick()
-                            })
+                            SearchBricoleCard(
+                                onSearchClick = { onSearchClick() }
+                            )
                         }
                     }
 
@@ -126,16 +113,19 @@ fun HomeScreen(
                             )
                         }
                     }
-                    items(state.services) {
-                        ServiceItem(dto = it, onClick = { onServiceClick(it) })
+                    items(state.services) { serviceResponseDto ->
+                        ServiceItem(
+                            serviceResponse = serviceResponseDto,
+                            onClick = { onServiceClick(serviceResponseDto) }
+                        )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
                     item(span = { GridItemSpan(2) }) {
                         Column {
                             Spacer(modifier = Modifier.height(20.dp))
-                            JoinBricoleCard(onJoinClick = {
-                                onJoinClick()
-                            })
+                            JoinBricoleCard(
+                                onJoinClick = { onJoinClick() }
+                            )
                             Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
@@ -146,51 +136,10 @@ fun HomeScreen(
 }
 
 @Composable
-private fun ErrorCard(
-    error: String?,
-    retryCount: Int,
-    onRetry: () -> Unit
+private fun ServiceItem(
+    serviceResponse: ServiceResponseDto,
+    onClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        error?.let { message ->
-            Text(
-                text = message,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center
-            )
-            Spacer(Modifier.height(22.dp))
-            OutlinedButton(
-                modifier = Modifier.height(42.dp), shape = RoundedCornerShape(10.dp),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 6.dp
-                ),
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 12.dp
-                ), enabled = retryCount < 5, onClick = {
-                    onRetry()
-                }) {
-                Icon(
-                    imageVector = Icons.Filled.Refresh,
-                    contentDescription = "Retry"
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Refresh",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ServiceItem(dto: ServiceResponseDto, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .aspectRatio(0.85f)
@@ -205,8 +154,8 @@ private fun ServiceItem(dto: ServiceResponseDto, onClick: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
-                model = servicePhotoUrl(dto.name),
-                contentDescription = dto.name,
+                model = servicePhotoUrl(serviceName = serviceResponse.name),
+                contentDescription = serviceResponse.name,
                 contentScale = ContentScale.FillBounds,
                 alpha = 0.9f,
                 modifier = Modifier
@@ -222,7 +171,7 @@ private fun ServiceItem(dto: ServiceResponseDto, onClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = dto.name,
+                    text = serviceResponse.name,
                     textAlign = TextAlign.Left,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.ExtraBold,
@@ -238,7 +187,7 @@ private fun ServiceItem(dto: ServiceResponseDto, onClick: () -> Unit) {
                         .background(colorResource(R.color.primary_blue)),
                     contentAlignment = Alignment.Center
                 ) {
-                    dto.icon?.let { Text(text = it, fontSize = 18.sp) }
+                    serviceResponse.icon?.let { Text(text = it, fontSize = 18.sp) }
                 }
             }
         }
@@ -259,30 +208,6 @@ fun servicePhotoUrl(serviceName: String?): Int {
         "roofing" -> R.drawable.roofing
         "masonry" -> R.drawable.masonry
         else -> R.drawable.plumbing
-    }
-}
-
-@Composable
-private fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 4.dp
-            )
-            Text(
-                text = stringResource(R.string.loading_services),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                fontSize = 14.sp
-            )
-        }
     }
 }
 
@@ -332,7 +257,6 @@ private fun JoinBricoleCard(onJoinClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier,
                 text = stringResource(R.string.join_provider),
                 color = Color.White,
                 fontSize = 15.sp,
@@ -357,9 +281,7 @@ private fun SearchBricoleCard(onSearchClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
-                .clickable {
-                    onSearchClick()
-                },
+                .clickable { onSearchClick() },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

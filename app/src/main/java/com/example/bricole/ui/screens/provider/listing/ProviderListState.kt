@@ -5,13 +5,15 @@ import com.example.bricole.data.ProviderResponseDto
 data class ProviderListState(
     val providers: List<ProviderResponseDto>,
     val isLoading: Boolean,
-    val isError: Boolean
+    val error: String?,
+    val retryCount: Int
 ) {
     companion object {
         val loading = ProviderListState(
             providers = emptyList(),
             isLoading = true,
-            isError = false
+            error = null,
+            retryCount = 0
         )
     }
 }

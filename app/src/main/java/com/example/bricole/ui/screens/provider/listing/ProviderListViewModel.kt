@@ -23,7 +23,7 @@ class ProviderListViewModel(
     fun loadProviders(id: Int) {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isLoading = true, isError = false)
+                it.copy(isLoading = true, error = null)
             }
             val result = serviceRepository.getProviders(id)
             result.onSuccess { providers ->
@@ -33,10 +33,17 @@ class ProviderListViewModel(
             }
             result.onFailure {
                 _uiState.update {
-                    it.copy(isLoading = false, isError = true)
+                    it.copy(isLoading = false, error = "An error has occurred")
                 }
             }
         }
+    }
+
+    fun retryProviders(id: Int) {
+        _uiState.update {
+            it.copy(isLoading = true, retryCount = it.retryCount + 1)
+        }
+        loadProviders(id)
     }
 
     companion object {
