@@ -11,16 +11,18 @@ import java.util.concurrent.TimeUnit
 private const val BASE_URL = "https://bricole-spring-boot-backend.onrender.com"
 
 object RetrofitInstance {
+    var MOCK_ENABLED = true
 
     val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
     val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(MockInterceptor(enabled = MOCK_ENABLED))
         .retryOnConnectionFailure(true)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
     val retrofit: Retrofit = Retrofit.Builder()
         .client(client)

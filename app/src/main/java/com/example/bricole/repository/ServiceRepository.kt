@@ -15,7 +15,6 @@ class ServiceRepository(private val serviceApi: ServiceApi) {
             Result.failure(e)
         }
     }
-
     suspend fun getProviders(id: Int): Result<List<ProviderResponseDto>> {
         return try {
             Result.success(serviceApi.getProviders(id))

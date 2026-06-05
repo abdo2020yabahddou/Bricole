@@ -9,7 +9,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 
 class ProviderRepository(private val providerApi: ProviderApi) {
-
     suspend fun search(serviceId: Int, city: String): Result<List<ProviderResponseDto>> {
         return try {
             Result.success(providerApi.search(serviceId, city))
@@ -18,7 +17,6 @@ class ProviderRepository(private val providerApi: ProviderApi) {
             Result.failure(e)
         }
     }
-
     suspend fun join(request: JoinRequest): Result<ProviderResponseDto> {
         return try {
             Result.success(providerApi.join(request))

@@ -9,7 +9,6 @@ import retrofit2.http.Path
 interface ServiceApi {
     @GET("services")
     suspend fun getAllServices(): List<ServiceResponseDto>
-
     @GET("services/providers/{id}")
     suspend fun getProviders(@Path("id") id: Int): List<ProviderResponseDto>
 }

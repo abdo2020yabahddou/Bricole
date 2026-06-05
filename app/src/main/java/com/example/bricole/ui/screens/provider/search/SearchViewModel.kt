@@ -75,13 +75,6 @@ class SearchViewModel(
             }
         }
     }
-
-    fun clearSearch() {
-        _uiState.update {
-            it.copy(isSearching = false)
-        }
-    }
-
     fun retrySearch(serviceId: Int, city: String) {
         _uiState.update {
             it.copy(isLoading = true, retryCount = it.retryCount + 1)
