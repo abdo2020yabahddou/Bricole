@@ -46,4 +46,4 @@ private const val servicesJson =
     "[\n  {\n    \"id\": 1,\n    \"name\": \"Plumbing\",\n    \"icon\": \"\\uD83D\\uDD27\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Electrical\",\n    \"icon\": \"⚡\"\n  }\n]"
 
 private const val providersJson =
-    "[\n  {\n    \"proId\": 1,\n    \"proName\": \"Abdellatif\",\n    \"phone\": \"+212666666666\",\n    \"city\": \"Casablanca\",\n    \"serviceId\": 1,\n    \"serviceName\": \"Plumbing\"\n  },\n  {\n    \"proId\": 2,\n    \"proName\": \"Abdelhadi\",\n    \"phone\": \"+212666666666\",\n    \"city\": \"Zagora\",\n    \"serviceId\": 1,\n    \"serviceName\": \"Plumbing\"\n  }\n]"
+    "[\n  {\n    \"proId\": 1,\n    \"proName\": \"Abdellatif\",\n    \"phone\": \"+212666666666\",\n    \"city\": \"Casablanca\",\n    \"serviceId\": 1,\n    \"serviceName\": \"Plumbing\"\n  },\n  {\n    \"proId\": 2,\n    \"proName\": \"Abdelhadi\",\n    \"phone\": \"+212666666666\",\n    \"city\": \"Zagora\",\n    \"serviceId\": 2,\n    \"serviceName\": \"Electrical\"\n  }\n]"

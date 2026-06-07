@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 private const val BASE_URL = "https://bricole-spring-boot-backend.onrender.com"
 
 object RetrofitInstance {
-    var MOCK_ENABLED = true
+    var MOCK_ENABLED = false
 
     val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
