@@ -265,8 +265,18 @@ private fun PhoneInput(phone: String, onPhoneChanged: (String) -> Unit) {
             if (newPhone.isEmpty()) {
                 onPhoneChanged("")
             } else if (newPhone.startsWith(prefix)) {
-                if (newPhone.length <= maxLength) {
-                    onPhoneChanged(newPhone)
+                val digitsOnly = newPhone  //.substring(prefix.length).filter { it.isDigit() }
+
+                // the max is max length we limited
+                if (digitsOnly.length <= maxLength) {
+                    onPhoneChanged(digitsOnly)
+                }
+            } else {
+                // If user tries to type without prefix,add it
+                val digitsOnly = newPhone    //.filter { it.isDigit() }
+
+                if (digitsOnly.length <= maxLength) {
+                    onPhoneChanged(digitsOnly)
                 }
             }
         },
